@@ -1,3 +1,4 @@
+using System;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -5,21 +6,36 @@ namespace MyWeb.Helpers
 {
     public class CryptoHelper
     {
-        private static readonly string Key = System.Web.Configuration.WebConfigurationManager.AppSettings["EncryptKey"];
+        private const int Iterations = 600000;
+        private const int SaltSize = 16;
+        private const int HashSize = 32;
 
-        public static string Encrypt(string plainText)
+        public static string HashPassword(string password)
         {
-            using (MD5 hasher = MD5.Create())
-            {
-                byte[] inputBytes = Encoding.UTF8.GetBytes(Key + plainText);
-                byte[] hashBytes = hasher.ComputeHash(inputBytes);
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            }
+            byte[] salt = new byte[SaltSize];
+            using (var rng = new RNGCryptoServiceProvider())
+                rng.GetBytes(salt);
+
+            byte[] hash = DeriveHash(password, salt);
+            return Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
         }
 
-        public static bool Verify(string plainText, string hash)
+        public static bool Verify(string password, string stored)
         {
-            return Encrypt(plainText) == hash;
+            string[] parts = stored.Split(':');
+            if (parts.Length != 2) return false;
+
+            byte[] salt = Convert.FromBase64String(parts[0]);
+            byte[] expected = Convert.FromBase64String(parts[1]);
+            byte[] actual = DeriveHash(password, salt);
+
+            return CryptographicOperations.FixedTimeEquals(actual, expected);
+        }
+
+        private static byte[] DeriveHash(string password, byte[] salt)
+        {
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256))
+                return pbkdf2.GetBytes(HashSize);
         }
     }
 }

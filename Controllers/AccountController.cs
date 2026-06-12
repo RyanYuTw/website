@@ -22,8 +22,8 @@ namespace MyWeb.Controllers
             if (!ModelState.IsValid) return View(model);
 
             // TODO: 查詢資料庫驗證帳號密碼
-            // var encPass = CryptoHelper.Encrypt(model.Password);
-            // var member = db.Members.FirstOrDefault(m => m.Account == model.Account && m.Password == encPass);
+            // var member = db.Members.FirstOrDefault(m => m.Account == model.Account);
+            // if (member == null || !CryptoHelper.Verify(model.Password, member.Password)) ...
             Member member = null; // 暫定，待接資料庫
 
             if (member == null)

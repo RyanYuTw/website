@@ -39,7 +39,10 @@ PublishScripts/
 *.log
 logs/
 
-# 環境設定（敏感資訊）
+# 應用程式設定（含敏感資訊，請以 Web.config.example 為範本）
+Web.config
+!Web.config.example
+!Web.Release.config
 App_Data/
 
 # Node（若使用前端工具鏈）
