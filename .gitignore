@@ -1,0 +1,44 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.v12.suo
+*.v14.suo
+
+# Build 輸出
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+packages/
+*.nupkg
+!packages/repositories.config
+
+# 發佈設定
+*.pubxml
+*.publishproj.user
+PublishScripts/
+
+# 使用者設定
+*.user
+*.rsuser
+
+# 暫存檔
+*.tmp
+*.bak
+*~
+
+# 日誌
+*.log
+logs/
+
+# 環境設定（敏感資訊）
+App_Data/
+
+# Node（若使用前端工具鏈）
+node_modules/
+npm-debug.log
