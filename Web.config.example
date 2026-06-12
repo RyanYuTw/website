@@ -17,7 +17,7 @@
     <add key="SmtpUser" value="your@email.com" />
     <add key="SmtpPassword" value="your-app-password" />
     <add key="SiteEmail" value="your@email.com" />
-    <add key="SiteName" value="Wish Estate 許園" />
+    <add key="SiteName" value="MyWebsite" />
   </appSettings>
   <connectionStrings>
     <add name="WishEstateDB"

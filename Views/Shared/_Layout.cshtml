@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - Wish Estate 許園</title>
+    <title>@ViewBag.Title - MyWebsite</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -11,7 +11,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                @Html.ActionLink("Wish Estate 許園", "Index", "Home", null, new { @class = "navbar-brand" })
+                @Html.ActionLink("MyWebsite", "Index", "Home", null, new { @class = "navbar-brand" })
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -66,7 +66,7 @@
 
     <footer class="bg-dark text-light mt-5 py-4">
         <div class="container text-center">
-            <p class="mb-1">&copy; @DateTime.Now.Year Wish Estate 許園股份有限公司</p>
+            <p class="mb-1">&copy; @DateTime.Now.Year MyWebsite</p>
             <p class="mb-0 small">
                 @Html.ActionLink("隱私政策", "Privacy", "Home", null, new { @class = "text-light" }) |
                 @Html.ActionLink("聯絡我們", "Contact", "Home", null, new { @class = "text-light" })
