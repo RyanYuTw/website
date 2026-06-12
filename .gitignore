@@ -41,6 +41,8 @@ logs/
 
 # 應用程式設定（含敏感資訊，請以 Web.config.example 為範本）
 Web.config
+# 環境變數（含敏感資訊，請以 .env.example 為範本）
+.env
 !Web.config.example
 !Web.Release.config
 App_Data/

@@ -20,4 +20,6 @@ RUN nuget restore packages.config -PackagesDirectory packages -NonInteractive
 RUN msbuild My.csproj /p:Configuration=Release /v:m
 
 EXPOSE 8080
-CMD ["xsp4", "--port=8080", "--address=0.0.0.0", "--nonstop"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
