@@ -1,0 +1,64 @@
+@model MyWeb.Models.CartViewModel
+@{
+    ViewBag.Title = "購物車";
+}
+
+<h2>購物車</h2>
+<hr />
+
+@if (Model.TotalQty == 0)
+{
+    <div class="alert alert-info">購物車是空的，<a href="@Url.Action("Index", "Product")">繼續購物</a></div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>商品</th>
+                    <th>單價</th>
+                    <th>數量</th>
+                    <th>小計</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>NT$ @item.UnitPrice.ToString("N0")</td>
+                        <td>
+                            @using (Html.BeginForm("Update", "Cart", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <input type="number" name="qty" value="@item.Quantity" min="0" max="99" class="form-control form-control-sm" style="width:70px" onchange="this.form.submit()" />
+                            }
+                        </td>
+                        <td>NT$ @item.SubTotal.ToString("N0")</td>
+                        <td>
+                            @using (Html.BeginForm("Remove", "Cart", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">刪除</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-bold">合計：</td>
+                    <td colspan="2" class="fw-bold text-danger">NT$ @Model.TotalAmount.ToString("N0")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between">
+        <a href="@Url.Action("Index", "Product")" class="btn btn-outline-dark">繼續購物</a>
+        <a href="@Url.Action("Checkout")" class="btn btn-dark">前往結帳</a>
+    </div>
+}

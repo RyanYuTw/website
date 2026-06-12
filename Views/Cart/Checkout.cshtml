@@ -1,0 +1,66 @@
+@model MyWeb.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "結帳";
+}
+
+<h2>確認訂單</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+    <div class="row">
+        <div class="col-md-7">
+            <h5>收件資料</h5>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.ReceiverName, "收件人姓名", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.ReceiverName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ReceiverName, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.ReceiverPhone, "聯絡電話", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.ReceiverPhone, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ReceiverPhone, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.ReceiverAddress, "收件地址", new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.ReceiverAddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ReceiverAddress, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.PaymentMethod, "付款方式", new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.PaymentMethod,
+                    new SelectList(new System.Collections.Generic.List<string> { "信用卡", "ATM轉帳", "貨到付款" }),
+                    "-- 請選擇 --",
+                    new { @class = "form-select" })
+                @Html.ValidationMessageFor(m => m.PaymentMethod, "", new { @class = "text-danger small" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Remark, "備註", new { @class = "form-label" })
+                @Html.TextAreaFor(m => m.Remark, new { @class = "form-control", rows = 3 })
+            </div>
+        </div>
+        <div class="col-md-5">
+            <h5>訂單摘要</h5>
+            <table class="table table-sm">
+                @if (Model.Cart != null)
+                {
+                    foreach (var item in Model.Cart.Items)
+                    {
+                        <tr>
+                            <td>@item.ProductName x @item.Quantity</td>
+                            <td class="text-end">NT$ @item.SubTotal.ToString("N0")</td>
+                        </tr>
+                    }
+                }
+                <tr class="fw-bold">
+                    <td>合計</td>
+                    <td class="text-end text-danger">NT$ @Model.Cart.TotalAmount.ToString("N0")</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-dark btn-lg">確認下單</button>
+}

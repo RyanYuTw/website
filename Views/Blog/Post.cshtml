@@ -1,0 +1,29 @@
+@model MyWeb.Models.BlogPost
+@{
+    ViewBag.Title = (Model != null) ? Model.Title : "文章";
+}
+
+@if (Model != null)
+{
+    <article>
+        <h1>@Model.Title</h1>
+        <p class="text-muted small">
+            @(Model.PublishedAt.HasValue ? Model.PublishedAt.Value.ToString("yyyy/MM/dd") : "") | @Model.Author
+        </p>
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath" class="img-fluid mb-4" alt="@Model.Title" />
+        }
+        <hr />
+        <div class="blog-content">
+            @Html.Raw(Model.Content)
+        </div>
+    </article>
+    <div class="mt-4">
+        <a href="@Url.Action("Index")" class="btn btn-outline-dark">&larr; 返回列表</a>
+    </div>
+}
+else
+{
+    <p>找不到此文章</p>
+}

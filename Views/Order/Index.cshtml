@@ -1,0 +1,48 @@
+@model MyWeb.Models.OrderListViewModel
+@{
+    ViewBag.Title = "我的訂單";
+}
+
+<h2>我的訂單</h2>
+<hr />
+
+<div class="mb-3">
+    <a href="@Url.Action("Index")" class="btn btn-sm @(string.IsNullOrEmpty(Model.StatusFilter) ? "btn-dark" : "btn-outline-dark")">全部</a>
+    <a href="@Url.Action("Index", new { status = "Pending" })" class="btn btn-sm @(Model.StatusFilter == "Pending" ? "btn-dark" : "btn-outline-dark")">待付款</a>
+    <a href="@Url.Action("Index", new { status = "Paid" })" class="btn btn-sm @(Model.StatusFilter == "Paid" ? "btn-dark" : "btn-outline-dark")">已付款</a>
+    <a href="@Url.Action("Index", new { status = "Shipped" })" class="btn btn-sm @(Model.StatusFilter == "Shipped" ? "btn-dark" : "btn-outline-dark")">已出貨</a>
+    <a href="@Url.Action("Index", new { status = "Completed" })" class="btn btn-sm @(Model.StatusFilter == "Completed" ? "btn-dark" : "btn-outline-dark")">已完成</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>日期</th>
+                <th>金額</th>
+                <th>狀態</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Orders != null)
+            {
+                foreach (var o in Model.Orders)
+                {
+                    <tr>
+                        <td>@o.OrderNo</td>
+                        <td>@o.OrderDate.ToString("yyyy/MM/dd")</td>
+                        <td>NT$ @o.TotalAmount.ToString("N0")</td>
+                        <td>@o.Status</td>
+                        <td><a href="@Url.Action("Detail", new { id = o.Id })" class="btn btn-sm btn-outline-dark">查看</a></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" class="text-center text-muted">尚無訂單記錄</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
