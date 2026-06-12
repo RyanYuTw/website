@@ -4,9 +4,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     gnupg ca-certificates curl \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://download.mono-project.com/repo/xamarin.gpg -o /etc/apt/keyrings/mono.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/mono.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" > /etc/apt/sources.list.d/mono-official-stable.list \
+    && curl -fsSL https://download.mono-project.com/repo/xamarin.gpg | apt-key add - \
+    && echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" > /etc/apt/sources.list.d/mono-official-stable.list \
     && apt-get update && apt-get install -y \
         mono-complete \
         mono-xsp4 \
