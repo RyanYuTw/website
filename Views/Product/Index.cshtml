@@ -37,7 +37,7 @@
                 {
                     <div class="col">
                         <div class="card h-100">
-                            <img src="@(string.IsNullOrEmpty(p.ImagePath) ? "/Content/images/no-image.png" : p.ImagePath)" class="card-img-top" alt="@p.Name" />
+                            <img src="@(string.IsNullOrEmpty(p.ImagePath) ? MyWeb.Helpers.ImageHelper.NoImage("list") : Html.ImageVariant(p.ImagePath, "list"))" class="card-img-top" style="aspect-ratio:3/2;object-fit:cover" alt="@p.Name" />
                             <div class="card-body">
                                 <h6 class="card-title">@p.Name</h6>
                                 <p class="card-text text-muted small">@p.Description</p>

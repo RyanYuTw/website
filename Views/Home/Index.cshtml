@@ -1,25 +1,87 @@
 @{
     ViewBag.Title = "首頁";
+    var featuredProducts = ViewBag.FeaturedProducts as List<MyWeb.Models.Product>;
+    var latestPosts = ViewBag.LatestPosts as List<MyWeb.Models.BlogPost>;
 }
 
-<section class="hero bg-light py-5 mb-4">
-    <div class="text-center">
-        <h1>MyWebsite</h1>
-        <p class="lead">頂級咖啡與生活選品</p>
-        <a href="@Url.Action("Index", "Product")" class="btn btn-dark btn-lg">探索商品</a>
-    </div>
+<section class="mb-4 p-0">
+    <picture>
+        <source media="(max-width:640px)" srcset="/Content/images/banner_mobile.jpg" />
+        <img src="/Content/images/banner_desktop.jpg" class="img-fluid w-100" style="object-fit:cover;max-height:480px" alt="banner" />
+    </picture>
 </section>
 
 <section class="mb-5">
-    <h2 class="mb-3">精選商品</h2>
-    <div class="row">
-        <p class="text-muted">（商品將從資料庫載入）</p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">精選商品</h2>
+        <a href="@Url.Action("Index", "Product")" class="btn btn-outline-dark btn-sm">查看全部</a>
     </div>
+    @if (featuredProducts != null && featuredProducts.Count > 0)
+    {
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+            @foreach (var p in featuredProducts)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@(string.IsNullOrEmpty(p.ImagePath) ? MyWeb.Helpers.ImageHelper.NoImage("list") : Html.ImageVariant(p.ImagePath, "list"))"
+                             class="card-img-top" style="aspect-ratio:3/2;object-fit:cover" alt="@p.Name" />
+                        <div class="card-body">
+                            <h6 class="card-title">@p.Name</h6>
+                            <p class="fw-bold mb-0">
+                                @if (p.SalePrice.HasValue)
+                                {
+                                    <span class="text-danger">NT$ @p.SalePrice.Value.ToString("N0")</span>
+                                    <del class="text-muted small ms-1">@p.Price.ToString("N0")</del>
+                                }
+                                else
+                                {
+                                    <span>NT$ @p.Price.ToString("N0")</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <a href="@Url.Action("Detail", "Product", new { id = p.Id })" class="btn btn-dark btn-sm w-100">查看商品</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">暫無精選商品</p>
+    }
 </section>
 
 <section class="mb-5">
-    <h2 class="mb-3">最新文章</h2>
-    <div class="row">
-        <p class="text-muted">（文章將從資料庫載入）</p>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">最新文章</h2>
+        <a href="@Url.Action("Index", "Blog")" class="btn btn-outline-dark btn-sm">查看全部</a>
     </div>
+    @if (latestPosts != null && latestPosts.Count > 0)
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            @foreach (var post in latestPosts)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="@Html.ImageVariant(post.ImagePath, "list")"
+                             class="card-img-top" style="aspect-ratio:16/9;object-fit:cover" alt="@post.Title" />
+                        <div class="card-body">
+                            <h6 class="card-title">@post.Title</h6>
+                            <p class="card-text text-muted small">@post.Summary</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <small class="text-muted">@(post.PublishedAt.HasValue ? post.PublishedAt.Value.ToString("yyyy/MM/dd") : "")</small>
+                            <a href="@Url.Action("Post", "Blog", new { id = post.Id })" class="btn btn-outline-dark btn-sm float-end">閱讀更多</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">暫無文章</p>
+    }
 </section>

@@ -1,8 +1,11 @@
 using System;
+using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Optimization;
+using MyWeb.Migrations;
+using MyWeb.Models;
 
 namespace MyWeb
 {
@@ -10,6 +13,13 @@ namespace MyWeb
     {
         protected void Application_Start()
         {
+            Database.SetInitializer(
+                new MigrateDatabaseToLatestVersion<AppDbContext, Configuration>());
+
+            // 強制在啟動時執行 migration + seed，不等到第一個請求
+            using (var db = new AppDbContext())
+                db.Database.Initialize(force: false);
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

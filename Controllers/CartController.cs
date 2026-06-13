@@ -31,19 +31,34 @@ namespace MyWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Add(int productId, int qty)
         {
-            // TODO: 查詢商品資訊
-            var cart = GetCart();
-            var existing = cart.Items.FirstOrDefault(x => x.ProductId == productId);
-            if (existing != null)
+            if (qty < 1) qty = 1;
+
+            using (var db = new AppDbContext())
             {
-                existing.Quantity += qty;
+                var product = db.Products.FirstOrDefault(p => p.Id == productId && p.IsActive);
+                if (product == null)
+                    return Json(new { success = false, message = "商品不存在" });
+
+                var cart = GetCart();
+                var existing = cart.Items.FirstOrDefault(x => x.ProductId == productId);
+                if (existing != null)
+                {
+                    existing.Quantity += qty;
+                }
+                else
+                {
+                    cart.Items.Add(new CartItem
+                    {
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        ImagePath = product.ImagePath,
+                        UnitPrice = product.SalePrice ?? product.Price,
+                        Quantity = qty
+                    });
+                }
+                Session[CartSessionKey] = cart;
+                return Json(new { success = true, totalQty = cart.TotalQty, productName = product.Name });
             }
-            else
-            {
-                // cart.Items.Add(new CartItem { ... });
-            }
-            Session[CartSessionKey] = cart;
-            return Json(new { success = true, totalQty = cart.TotalQty });
         }
 
         // POST: /Cart/Update

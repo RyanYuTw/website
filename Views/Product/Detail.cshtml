@@ -7,15 +7,21 @@
 {
     <div class="row">
         <div class="col-md-5">
-            <img src="@(string.IsNullOrEmpty(Model.ImagePath) ? "/Content/images/no-image.png" : Model.ImagePath)" class="img-fluid" alt="@Model.Name" />
+            <img src="@(string.IsNullOrEmpty(Model.ImagePath) ? MyWeb.Helpers.ImageHelper.NoImage("detail") : Html.ImageVariant(Model.ImagePath, "detail"))" class="img-fluid" style="aspect-ratio:3/2;object-fit:cover;width:100%" alt="@Model.Name" />
         </div>
         <div class="col-md-7">
             <h2>@Model.Name</h2>
             <p class="text-muted">@Model.Description</p>
-            <h4 class="text-danger">NT$ @Model.Price.ToString("N0")</h4>
-
-            @using (Html.BeginForm("Add", "Cart", FormMethod.Post))
+            @if (Model.SalePrice.HasValue)
             {
+                <h4><span class="text-danger">NT$ @Model.SalePrice.Value.ToString("N0")</span> <del class="text-muted fs-5">@Model.Price.ToString("N0")</del></h4>
+            }
+            else
+            {
+                <h4>NT$ @Model.Price.ToString("N0")</h4>
+            }
+
+            <form id="addCartForm">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="productId" value="@Model.Id" />
                 <div class="d-flex align-items-center mb-3">
@@ -23,7 +29,9 @@
                     <input type="number" name="qty" value="1" min="1" max="99" class="form-control" style="width:80px" />
                 </div>
                 <button type="submit" class="btn btn-dark btn-lg">加入購物車</button>
-            }
+            </form>
+
+            <div id="cartToast" class="alert mt-3 d-none" role="alert"></div>
         </div>
     </div>
     <hr />
@@ -31,6 +39,39 @@
         <h5>商品介紹</h5>
         @Html.Raw(Model.Content)
     </div>
+
+    <script>
+    document.getElementById('addCartForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var form = this;
+        var data = new FormData(form);
+        var params = new URLSearchParams(data);
+
+        fetch('@Url.Action("Add", "Cart")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+            var toast = document.getElementById('cartToast');
+            if (res.success) {
+                toast.className = 'alert alert-success mt-3';
+                toast.textContent = '已加入購物車！購物車共 ' + res.totalQty + ' 件';
+            } else {
+                toast.className = 'alert alert-danger mt-3';
+                toast.textContent = res.message || '加入失敗，請稍後再試';
+            }
+            setTimeout(function () { toast.className = 'alert mt-3 d-none'; }, 3000);
+        })
+        .catch(function () {
+            var toast = document.getElementById('cartToast');
+            toast.className = 'alert alert-danger mt-3';
+            toast.textContent = '網路錯誤，請稍後再試';
+            setTimeout(function () { toast.className = 'alert mt-3 d-none'; }, 3000);
+        });
+    });
+    </script>
 }
 else
 {

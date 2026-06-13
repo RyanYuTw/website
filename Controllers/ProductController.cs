@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Web.Mvc;
 using MyWeb.Models;
 
@@ -8,31 +9,50 @@ namespace MyWeb.Controllers
         // GET: /Product
         public ActionResult Index(int? categoryId, string keyword, int? page)
         {
-            var viewModel = new ProductListViewModel
+            int pageIndex = page ?? 1;
+            const int pageSize = 12;
+
+            using (var db = new AppDbContext())
             {
-                CurrentCategoryId = categoryId,
-                SearchKeyword = keyword,
-                PageIndex = page ?? 1,
-                PageSize = 12
-            };
-            // TODO: 從資料庫查詢商品列表
-            return View(viewModel);
+                var query = db.Products.Include("Category").Where(p => p.IsActive);
+
+                if (categoryId.HasValue)
+                    query = query.Where(p => p.CategoryId == categoryId.Value);
+
+                if (!string.IsNullOrWhiteSpace(keyword))
+                    query = query.Where(p => p.Name.Contains(keyword) || p.Description.Contains(keyword));
+
+                int total = query.Count();
+                var products = query
+                    .OrderBy(p => p.SortOrder)
+                    .ThenByDescending(p => p.CreatedAt)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                var vm = new ProductListViewModel
+                {
+                    Products = products,
+                    Categories = db.ProductCategories.Where(c => c.IsActive).OrderBy(c => c.SortOrder).ToList(),
+                    CurrentCategoryId = categoryId,
+                    SearchKeyword = keyword,
+                    TotalCount = total,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize
+                };
+                return View(vm);
+            }
         }
 
         // GET: /Product/Detail/5
         public ActionResult Detail(int id)
         {
-            // TODO: 從資料庫查詢商品詳細資料
-            Product product = null;
-            if (product == null) return HttpNotFound();
-            return View(product);
-        }
-
-        // GET: /Product/Category/coffee
-        public ActionResult Category(string slug)
-        {
-            // TODO: 依分類顯示商品
-            return View();
+            using (var db = new AppDbContext())
+            {
+                var product = db.Products.Include("Category").FirstOrDefault(p => p.Id == id && p.IsActive);
+                if (product == null) return HttpNotFound();
+                return View(product);
+            }
         }
     }
 }

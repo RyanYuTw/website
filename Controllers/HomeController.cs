@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Web.Mvc;
+using MyWeb.Models;
 
 namespace MyWeb.Controllers
 {
@@ -7,6 +9,20 @@ namespace MyWeb.Controllers
         // GET: /
         public ActionResult Index()
         {
+            using (var db = new AppDbContext())
+            {
+                ViewBag.FeaturedProducts = db.Products
+                    .Where(p => p.IsActive && p.IsRecommend)
+                    .OrderBy(p => p.SortOrder)
+                    .Take(4)
+                    .ToList();
+
+                ViewBag.LatestPosts = db.BlogPosts
+                    .Where(p => p.IsPublished)
+                    .OrderByDescending(p => p.PublishedAt)
+                    .Take(3)
+                    .ToList();
+            }
             return View();
         }
 
@@ -29,7 +45,6 @@ namespace MyWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                // TODO: 寄送聯絡表單 email
                 ViewBag.Message = "感謝您的留言，我們將盡快與您聯絡！";
             }
             return View();

@@ -12,7 +12,7 @@
         </p>
         @if (!string.IsNullOrEmpty(Model.ImagePath))
         {
-            <img src="@Model.ImagePath" class="img-fluid mb-4" alt="@Model.Title" />
+            <img src="@Html.ImageVariant(Model.ImagePath, "detail")" class="img-fluid mb-4" style="aspect-ratio:16/9;object-fit:cover;width:100%" alt="@Model.Title" />
         }
         <hr />
         <div class="blog-content">

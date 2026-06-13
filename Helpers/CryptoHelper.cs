@@ -29,7 +29,16 @@ namespace MyWeb.Helpers
             byte[] expected = Convert.FromBase64String(parts[1]);
             byte[] actual = DeriveHash(password, salt);
 
-            return CryptographicOperations.FixedTimeEquals(actual, expected);
+            return FixedTimeEquals(actual, expected);
+        }
+
+        private static bool FixedTimeEquals(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length) return false;
+            int diff = 0;
+            for (int i = 0; i < a.Length; i++)
+                diff |= a[i] ^ b[i];
+            return diff == 0;
         }
 
         private static byte[] DeriveHash(string password, byte[] salt)
